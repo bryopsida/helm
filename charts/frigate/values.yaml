@@ -12,22 +12,15 @@ serviceAccount:
   annotations: {}
   name: ""
 podAnnotations: {}
-podSecurityContext:
-  fsGroup: 2000
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
+podSecurityContext: {}
+securityContext: {}
 service:
   type: ClusterIP
   port: 80
 storage:
   enabled: true
   size: 10Gi
-  storageClass: default
+  storageClass: ~
 hwaccel:
   enabled: false
   intel: false

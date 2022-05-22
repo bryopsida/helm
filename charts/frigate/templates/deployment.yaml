@@ -33,7 +33,7 @@ spec:
             name: {{ .Release.Name }}-config
             items:
               - key: frigate.yaml
-                path: frigate.yaml
+                path: config.yaml
         - name: database-volume
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-db-pvc
@@ -47,19 +47,23 @@ spec:
             - name: config-volume
               mountPath: /config
               readOnly: true
-              required: true
             - name: database-volume
               mountPath: /media/frigate/
               readOnly: false
-              required: true
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 5000
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
               port: http
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 12
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /

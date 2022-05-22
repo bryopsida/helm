@@ -55,7 +55,7 @@ data:
       # Optional: interval in seconds for publishing stats (default: shown below)
       stats_interval: 60
       {{- end }}
-      database:
-        # The path to store the SQLite DB (default: shown below)
-        path: /media/frigate/frigate.db
-      cameras: []
+    database:
+      # The path to store the SQLite DB (default: shown below)
+      path: /media/frigate/frigate.db
+    cameras: []
