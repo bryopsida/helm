@@ -71,3 +71,16 @@ Create the host name of the mqtt broker
 {{- required .Values.mqtt.externalBrokerHostname }}
 {{- end }}
 {{- end }}
+
+{{/*
+Get the storage class name for the database pvc
+*/}}
+{{- define "frigate.storageClassName" -}}
+{{- if .Values.storage.storageClass }}
+{{- .Values.storage.storageClass }}
+{{- else if .Release.IsUpgrade }}
+{{- (lookup "v1" "PersistentVolumeClaim" .Release.Namespace (printf "%s-db-pvc" .Release.Name)).spec.storageClassName }}
+{{- else }}
+{{- .Values.storage.storageClass }}
+{{- end }}
+{{- end }}

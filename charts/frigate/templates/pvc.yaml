@@ -1,4 +1,5 @@
 {{- if .Values.storage.enabled }}
+{{ $storageClassName := include "frigate.storageClassName" . }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -7,7 +8,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: {{ .Values.storage.storageClass }}
+  storageClassName: {{ $storageClassName }}
   resources:
     requests:
       storage: {{ .Values.storage.size }}
