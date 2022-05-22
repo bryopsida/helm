@@ -24,12 +24,10 @@ securityContext:
 service:
   type: ClusterIP
   port: 80
-#- Enables using a PVC to store frigate database, otherwise it will use ephermeral storage on node that doesn't persist on pod restart
 storage:
   enabled: true
   size: 10Gi
   storageClass: default
-#- Controls mounting various hardware devices into the container for hardware acceleration
 hwaccel:
   enabled: false
   intel: false
@@ -56,5 +54,4 @@ tolerations: []
 affinity: {}
 mqtt:
   enabled: true
-  #- If you have an existing broker provide the hostname, this is required if mqtt.enabled is false
   externalBrokerHostname: ~
