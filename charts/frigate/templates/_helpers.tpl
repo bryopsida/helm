@@ -60,3 +60,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the host name of the mqtt broker
+*/}}
+{{- define "frigate.mqtt.host" -}}
+{{- if .Values.mqtt.enabled }}
+{{- .Release.Name }}-mqtt
+{{- else }}
+{{- required .Values.mqtt.externalBrokerHostname }}
+{{- end }}
+{{- end }}
