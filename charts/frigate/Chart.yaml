@@ -6,3 +6,9 @@ version: 0.1.0
 appVersion: "0.11.0"
 maintainers:
   - name: bryopsida
+dependencies:
+  - name: mosquitto
+    version: 4.3.2
+    repository: 'https://k8s-at-home.com/charts/'
+    condition: mqtt.enabled
+    alias: mqtt
