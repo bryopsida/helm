@@ -27,12 +27,31 @@ spec:
       serviceAccountName: {{ include "frigate.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: frigate.yaml
+                path: frigate.yaml
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-db-pvc
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+              readOnly: true
+              required: true
+            - name: database-volume
+              mountPath: /media/frigate/
+              readOnly: false
+              required: true
           ports:
             - name: http
               containerPort: 80
