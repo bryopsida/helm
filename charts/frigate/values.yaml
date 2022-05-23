@@ -45,6 +45,8 @@ autoscaling:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+secrets: []
+cameras: {}
 mqtt:
   enabled: true
   externalBrokerHostname: ~

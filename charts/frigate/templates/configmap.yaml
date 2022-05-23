@@ -58,4 +58,9 @@ data:
     database:
       # The path to store the SQLite DB (default: shown below)
       path: /media/frigate/frigate.db
-    cameras: []
+    {{- if .Values.cameras }}
+    cameras: 
+      {{- .Values.cameras | toYaml | nindent 6 }}
+    {{- else }}
+    cameras: {}
+    {{- end }}
