@@ -34,9 +34,14 @@ spec:
             items:
               - key: frigate.yaml
                 path: config.yaml
+        {{- if .Values.storage.enabled }}
         - name: database-volume
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-db-pvc
+        {{- else }}
+        - name: database-volume
+          emptyDir: {}
+        {{- end }}
         {{- if .Values.hwaccel.intelEnabled }}
         - name: hwaccel-intel-dev
           hostPath:
