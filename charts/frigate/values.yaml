@@ -13,7 +13,8 @@ serviceAccount:
   name: ""
 podAnnotations: {}
 podSecurityContext: {}
-securityContext: {}
+securityContext: 
+  privileged: true
 service:
   type: ClusterIP
   port: 80
@@ -22,10 +23,8 @@ storage:
   size: 10Gi
   storageClass: ~
 hwaccel:
-  enabled: false
-  intel: false
-  nvidia: false
-  usb: false
+  intelEnabled: false
+  usbEnabled: false
 ingress:
   enabled: false
   className: ""
