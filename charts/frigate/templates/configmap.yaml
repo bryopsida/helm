@@ -64,3 +64,87 @@ data:
     {{- else }}
     cameras: {}
     {{- end }}
+    {{- if .Values.timestamp_style }}
+    timestamp_style: 
+      {{- .Values.timestamp_style | toYaml | nindent 6 }}
+    {{- else }}
+    timestamp_style: {}
+    {{- end }}
+    {{- if .Values.live }}
+    live: 
+      {{- .Values.live | toYaml | nindent 6 }}
+    {{- else }}
+    live: {}
+    {{- end }}
+    {{- if .Values.rtmp }}
+    rtmp: 
+      {{- .Values.rtmp | toYaml | nindent 6 }}
+    {{- else }}
+    rtmp: {}
+    {{- end }}
+    {{- if .Values.snapshots }}
+    snapshots: 
+      {{- .Values.snapshots | toYaml | nindent 6 }}
+    {{- else }}
+    snapshots: {}
+    {{- end }}
+    {{- if .Values.record }}
+    record: 
+      {{- .Values.record | toYaml | nindent 6 }}
+    {{- else }}
+    record: {}
+    {{- end }}
+    {{- if .Values.motion }}
+    motion: 
+      {{- .Values.motion | toYaml | nindent 6 }}
+    {{- else }}
+    motion: {}
+    {{- end }}
+    {{- if .Values.objects }}
+    objects: 
+      {{- .Values.objects | toYaml | nindent 6 }}
+    {{- else }}
+    objects: {}
+    {{- end }}
+    {{- if .Values.detect }}
+    detect: 
+      {{- .Values.detect | toYaml | nindent 6 }}
+    {{- else }}
+    detect: {}
+    {{- end }}
+    {{- if .Values.ffmpeg }}
+    ffmpeg: 
+      {{- .Values.ffmpeg | toYaml | nindent 6 }}
+    {{- else }}
+    ffmpeg: {}
+    {{- end }}
+    {{- if .Values.birdseye }}
+    birdseye: 
+      {{- .Values.birdseye | toYaml | nindent 6 }}
+    {{- else }}
+    birdseye: {}
+    {{- end }}
+    {{- if .Values.environment_vars }}
+    environment_vars: 
+      {{- .Values.environment_vars | toYaml | nindent 6 }}
+    {{- else }}
+    environment_vars: {}
+    {{- end }}
+    {{- if .Values.logger }}
+    logger: 
+      {{- .Values.logger | toYaml | nindent 6 }}
+    {{- else }}
+    logger: {}
+    {{- end }}
+    {{- if .Values.model }}
+    model: 
+      {{- .Values.model | toYaml | nindent 6 }}
+    {{- else }}
+    model: {}
+    {{- end }}
+    {{- if .Values.detectors }}
+    detectors: 
+      {{- .Values.detectors | toYaml | nindent 6 }}
+    {{- else }}
+    detectors: {}
+    {{- end }}
