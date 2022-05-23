@@ -24,6 +24,7 @@ chmod +x .bin/semver2
 
 # add helm repos
 helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add k8s-at-home https://k8s-at-home.com/charts/
 
 # Compute required kubernetes api versions
 apis=''

@@ -60,3 +60,27 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the host name of the mqtt broker
+*/}}
+{{- define "frigate.mqtt.host" -}}
+{{- if .Values.mqtt.enabled }}
+{{- .Release.Name }}-mqtt
+{{- else }}
+{{- required .Values.mqtt.externalBrokerHostname }}
+{{- end }}
+{{- end }}
+
+{{/*
+Get the storage class name for the database pvc
+*/}}
+{{- define "frigate.storageClassName" -}}
+{{- if .Values.storage.storageClass }}
+{{- .Values.storage.storageClass }}
+{{- else if .Release.IsUpgrade }}
+{{- (lookup "v1" "PersistentVolumeClaim" .Release.Namespace (printf "%s-db-pvc" .Release.Name)).spec.storageClassName }}
+{{- else }}
+{{- .Values.storage.storageClass }}
+{{- end }}
+{{- end }}
