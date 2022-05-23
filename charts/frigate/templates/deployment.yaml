@@ -37,6 +37,16 @@ spec:
         - name: database-volume
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-db-pvc
+        {{- if .Values.hwaccel.intelEnabled }}
+        - name: hwaccel-intel-dev
+          hostPath:
+            path: /dev/dri
+        {{- end }}
+        {{- if .Values.hwaccel.usbEnabled }}
+        - name: hwaccel-usb-dev
+          hostPath:
+            path: /dev/bus/usb
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -50,6 +60,14 @@ spec:
             - name: database-volume
               mountPath: /media/frigate/
               readOnly: false
+            {{- if .Values.hwaccel.intelEnabled }}
+            - name: hwaccel-intel-dev
+              mountPath: /dev/dri
+            {{- end }}
+            {{- if .Values.hwaccel.usbEnabled }}
+            - name: hwaccel-usb-dev
+              mountPath: /dev/bus/usb
+            {{- end }}
           env:
           {{- range .Values.secrets }}
             - name: {{ .envVarName }}
