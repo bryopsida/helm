@@ -13,7 +13,7 @@ serviceAccount:
   name: ""
 podAnnotations: {}
 podSecurityContext: {}
-securityContext: 
+securityContext:
   privileged: true
 service:
   type: ClusterIP
