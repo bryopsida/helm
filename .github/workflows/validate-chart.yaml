@@ -1,97 +1,12 @@
-name: Lint and Test Charts
+name: Lint and Test Chart
 on:
   pull_request:
     paths:
       - 'charts/**'
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
 jobs:
-  lint-chart:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
-        with:
-          fetch-depth: 0
-      - name: Install Helm
-        uses: azure/setup-helm@v3.3
-        with:
-          version: v3.7.1
-      - uses: actions/setup-python@af57b6499414c9dd25c305c7c008a5109c5a188f
-        with:
-          python-version: 3.7
-      - name: Install chart-testing
-        uses: helm/chart-testing-action@afea100a513515fbd68b0e72a7bb0ae34cb62aec
-        with:
-          version: v3.4.0
-      - name: Run lint
-        run: |
-          helm repo add k8s-at-home https://k8s-at-home.com/charts/
-          helm repo update
-          ct lint --config .github/ct.yaml
-  lint-docs:
-    runs-on: ubuntu-latest
-    needs: lint-chart
-    steps:
-      - name: Checkout
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
-      - name: Run helm-docs
-        run: .github/helm-docs.sh
-  kubeval-chart:
-    runs-on: ubuntu-latest
-    needs:
-      - lint-chart
-      - lint-docs
-    strategy:
-      matrix:
-        k8s:
-          - v1.21.12
-          - v1.22.9
-          - v1.23.6
-          - v1.24.0
-    steps:
-      - name: Checkout
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
-        with:
-          fetch-depth: 0
-      - name: Run kubeval
-        env:
-          KUBERNETES_VERSION: ${{ matrix.k8s }}
-        run: .github/kubeval.sh
-  install-chart:
-    name: install-chart
-    runs-on: ubuntu-latest
-    needs:
-      - lint-chart
-      - lint-docs
-      - kubeval-chart
-    strategy:
-      matrix:
-        k8s:
-          - v1.21.12
-          - v1.22.9
-          - v1.23.6
-          - v1.24.0
-    steps:
-      - name: Checkout
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707 
-        with:
-          fetch-depth: 0
-
-      - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@9e8295d178de23cbfbd8fa16cf844eec1d773a07 
-        with:
-          node_image: kindest/node:${{ matrix.k8s }}
-          version: v0.11.1 
-
-      - name: Install chart-testing
-        uses: helm/chart-testing-action@afea100a513515fbd68b0e72a7bb0ae34cb62aec 
-        with:
-          version: v3.4.0 
-
-      - name: Run chart install
-        run: |
-          helm repo add k8s-at-home https://k8s-at-home.com/charts/
-          helm repo update
-          ct install --config .github/ct.yaml
+  test:
+    name: 'Helm'
+    uses: curium-rocks/flows/.github/workflows/helm-qa.yml@main
+    with:
+      charts_dir: 'helm'
+      helm_extra_sets: '--set service.type=ClusterIP'
