@@ -8,7 +8,7 @@ maintainers:
   - name: bryopsida
 dependencies:
   - name: mosquitto
-    version: 4.3.2
+    version: 4.8.2
     repository: 'https://k8s-at-home.com/charts/'
     condition: mqtt.enabled
     alias: mqtt
