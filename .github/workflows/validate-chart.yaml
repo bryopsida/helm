@@ -8,5 +8,5 @@ jobs:
     name: 'Helm'
     uses: curium-rocks/flows/.github/workflows/helm-qa.yml@main
     with:
-      charts_dir: 'helm'
+      charts_dir: 'charts'
       helm_extra_sets: '--set service.type=ClusterIP'
