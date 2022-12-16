@@ -1,8 +1,8 @@
 replicaCount: 1
 image:
   repository: blakeblackshear/frigate
-  pullPolicy: IfNotPresent
-  tag: "0.11.0-d2c3cdc"
+  pullPolicy: Always
+  tag: "0.11.1"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
