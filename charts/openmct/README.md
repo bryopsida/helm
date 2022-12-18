@@ -31,17 +31,15 @@ A Helm chart deploying and managing NASA's OpenMCT
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
 | ingress.tls | list | `[]` |  |
-| loader.inline | string | `"console.log('Hello world from loader-ct.js, provided by a configmap')\nPluginConfidenceTest()\n"` |  |
-| loader.loaderName | string | `"loader.js"` |  |
-| loader.loaderPvcName | string | `"openmct-loader"` |  |
-| loader.useInline | bool | `true` |  |
-| loader.usePvc | bool | `false` |  |
+| loader | object | `{"claimName":"openmct-loader","enabled":false,"loaderName":"loader.js"}` | Values for providing your own loader/bootstrapper to adjust openmct configuration |
+| loader.claimName | string | `"openmct-loader"` | Name of the PVC holding the load script |
+| loader.enabled | bool | `false` | Toggles inclusion of a PVC to map in custom bootstrap/load script |
+| loader.loaderName | string | `"loader.js"` | Name of the script inside of the PVC that contains the bootstrap logic |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
-| plugins.inline."plugin-ct.js" | string | `"function PluginConfidenceTest () {\n  console.log('Greatings from PluginConfidenceTest defined in a configmap')\n}\n"` |  |
-| plugins.pluginPvcName | string | `"openmct-plugins"` |  |
-| plugins.useInline | bool | `true` |  |
-| plugins.usePvc | bool | `false` |  |
+| plugins | object | `{"claimName":"openmct-plugins","enabled":false}` | Values for configuring loading additional openmct plugins through a PVC |
+| plugins.claimName | string | `"openmct-plugins"` | Name of the PVC holding the plugins |
+| plugins.enabled | bool | `false` | Toggle mounting a PVC with plugins |
 | podAnnotations | object | `{}` |  |
 | podSecurityContext.fsGroup | int | `1000` |  |
 | replicaCount | int | `1` |  |
