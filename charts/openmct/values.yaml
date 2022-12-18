@@ -4,7 +4,6 @@ image:
   repository: ghcr.io/bryopsida/openmct
   pullPolicy: Always
   tag: "main"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
