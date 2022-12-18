@@ -1,0 +1,64 @@
+replicaCount: 1
+image:
+  repository: ghcr.io/bryopsida/openmct
+  pullPolicy: Always
+  tag: "main"
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+podAnnotations: {}
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+service:
+  type: ClusterIP
+  port: 80
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: openmct.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+resources:
+  limits:
+    cpu: 1024m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+nodeSelector: {}
+tolerations: []
+affinity: {}
+# -- Values for configuring loading additional openmct plugins through a PVC
+plugins:
+  # -- Toggle mounting a PVC with plugins
+  enabled: false
+  # -- Name of the PVC holding the plugins
+  claimName: openmct-plugins
+# -- Values for providing your own loader/bootstrapper to adjust openmct configuration
+loader:
+  # -- Toggles inclusion of a PVC to map in custom bootstrap/load script
+  enabled: false
+  # -- Name of the PVC holding the load script
+  claimName: openmct-loader
+  # -- Name of the script inside of the PVC that contains the bootstrap logic
+  loaderName: loader.js
