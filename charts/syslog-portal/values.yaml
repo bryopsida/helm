@@ -10,7 +10,9 @@ serviceAccount:
   create: true
   annotations: {}
   name: ""
-podAnnotations: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9091"
 podSecurityContext:
   fsGroup: 1000
 securityContext:
