@@ -40,6 +40,9 @@ spec:
             - name: management
               containerPort: 8080
               protocol: TCP
+            - name: metrics
+              containerPort: 9091
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /
