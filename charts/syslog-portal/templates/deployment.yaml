@@ -27,12 +27,19 @@ spec:
       serviceAccountName: {{ include "syslog-portal.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if .Values.archiver.enabled }}
+      
       volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: production.json
+                path: production.json
+        {{- if .Values.archiver.enabled }}
         - name: archiver-credentials
           secret:
             secretName: {{ include "syslog-portal.archiverSecretName" . }}
-      {{- end }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -58,17 +65,26 @@ spec:
               path: /
               port: management
           volumeMounts:
+            - name: config
+              mountPath: /usr/src/app/run/config/
+              readOnly: true
             {{- if .Values.archiver.enabled }}
             - name: archiver-credentials
-              mountPath: /app/run/archiver/
+              mountPath: /usr/src/app/run/secrets/archiver/
             {{- end }} 
           env:
+            - name: NODE_CONFIG_DIR
+              value: /usr/src/app/run/config:/usr/src/app/config
+            - name: SYSLOG_PORTAL_LOGGER_LEVEL
+              value: "{{ .Values.logLevel }}"
             - name: SYSLOG_PORTAL_ARCHIVER_ENABLED
               value: "{{ .Values.archiver.enabled }}"
+            - name: SYSLOG_PORTAL_ARCHIVER_HOSTNAME
+              value: "{{ .Values.archiver.hostname }}"
             - name: SYSLOG_PORTAL_ARCHIVER_USERNAME_FILE
-              value: "{{ default "/app/run/archiver/username" .Values.archiver.usernameFile }}"
+              value: "{{ default "/usr/src/app/run/archiver/username" .Values.archiver.usernameFile }}"
             - name: SYSLOG_PORTAL_ARCHIVER_PASSWORD_FILE
-              value: "{{ default "/app/run/archiver/password" .Values.archiver.passwordFile }}"
+              value: "{{ default "/usr/src/app/run/archiver/password" .Values.archiver.passwordFile }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       topologySpreadConstraints:

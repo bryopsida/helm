@@ -43,6 +43,7 @@ autoscaling:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+logLevel: "info"
 archiver:
   enabled: false
   type: 'MONGO'

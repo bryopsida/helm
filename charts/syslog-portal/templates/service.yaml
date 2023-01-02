@@ -9,7 +9,7 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: syslog
-      protocol: TCP
+      protocol: UDP
       name: syslog
   selector:
     {{- include "syslog-portal.selectorLabels" . | nindent 4 }}

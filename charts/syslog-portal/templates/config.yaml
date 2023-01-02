@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  production.json: |
+    {
+      "server": {
+        "archiver": {
+          "options": {
+            "directConnection": true
+          }
+        }
+      }
+    }
