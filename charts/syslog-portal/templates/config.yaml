@@ -7,9 +7,9 @@ data:
     {
       "server": {
         "archiver": {
-          "options": {
-            "directConnection": true
-          }
+          "type": "{{ default "MONGO" .Values.archiver.type }}",
+          "hostname": "{{ .Values.archiver.hostname }}",
+          "port": {{ default 27017 .Values.archiver.port }}
         }
       }
     }

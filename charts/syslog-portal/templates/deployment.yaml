@@ -73,6 +73,8 @@ spec:
               mountPath: /usr/src/app/run/secrets/archiver/
             {{- end }} 
           env:
+            - name: NODE_ENV
+              value: "production"
             - name: NODE_CONFIG_DIR
               value: /usr/src/app/run/config:/usr/src/app/config
             - name: SYSLOG_PORTAL_LOGGER_LEVEL
@@ -81,10 +83,12 @@ spec:
               value: "{{ .Values.archiver.enabled }}"
             - name: SYSLOG_PORTAL_ARCHIVER_HOSTNAME
               value: "{{ .Values.archiver.hostname }}"
+            {{- if .Values.archiver.authEnabled }}
             - name: SYSLOG_PORTAL_ARCHIVER_USERNAME_FILE
-              value: "{{ default "/usr/src/app/run/archiver/username" .Values.archiver.usernameFile }}"
+              value: "{{ default "/usr/src/app/run/secrets/archiver/username" .Values.archiver.usernameFile }}"
             - name: SYSLOG_PORTAL_ARCHIVER_PASSWORD_FILE
-              value: "{{ default "/usr/src/app/run/archiver/password" .Values.archiver.passwordFile }}"
+              value: "{{ default "/usr/src/app/run/secrets/archiver/password" .Values.archiver.passwordFile }}"
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       topologySpreadConstraints:

@@ -46,6 +46,7 @@ affinity: {}
 logLevel: "info"
 archiver:
   enabled: false
+  authEnabled: false
   type: 'MONGO'
   hostname: ~
   port: 27017
