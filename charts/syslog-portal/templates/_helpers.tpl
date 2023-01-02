@@ -60,3 +60,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Default archiver credential name
+*/}}
+{{- define "syslog-portal.defaultArchiverSecretName" -}}
+{{- printf "%s-archiver-credentials" .Release.Name }}
+{{- end }}
+
+{{/*
+Lookup the right secret name for the archiver credentials
+*/}}
+{{- define "syslog-portal.archiverSecretName" -}}
+{{- default (include "syslog-portal.defaultArchiverSecretName" .) .Values.archiver.existingSecret }}
+{{- end }}

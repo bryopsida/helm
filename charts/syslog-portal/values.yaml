@@ -43,3 +43,13 @@ autoscaling:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+archiver:
+  enabled: false
+  type: 'MONGO'
+  hostname: ~
+  port: 27017
+  username: ~
+  password: ~
+  usernameFile: ~
+  passwordFile: ~
+  existingSecret: ~
