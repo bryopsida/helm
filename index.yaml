@@ -50,4 +50,17 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/openmct-0.1.0/openmct-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-18T22:18:49.905144229Z"
+  syslog-portal:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-03T00:01:29.677704458Z"
+    description: A Helm chart to launch a syslog-portal for ingesting syslog streams
+    digest: 0ebab500656ba85ea0b2b76fea9a6d2803f0f3a64cc50b8d74194298704744ea
+    maintainers:
+    - name: bryopsida
+    name: syslog-portal
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-01-03T00:01:29.677713258Z"
