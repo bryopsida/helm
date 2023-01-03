@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "syslog-portal.fullname" . }}
+  labels:
+    {{- include "syslog-portal.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "syslog-portal.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "syslog-portal.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "syslog-portal.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: production.json
+                path: production.json
+        {{- if .Values.archiver.enabled }}
+        - name: archiver-credentials
+          secret:
+            secretName: {{ include "syslog-portal.archiverSecretName" . }}
+        {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: syslog
+              containerPort: 1514
+              protocol: UDP
+            - name: management
+              containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: 9091
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: management
+          readinessProbe:
+            httpGet:
+              path: /
+              port: management
+          volumeMounts:
+            - name: config
+              mountPath: /usr/src/app/run/config/
+              readOnly: true
+            {{- if .Values.archiver.enabled }}
+            - name: archiver-credentials
+              mountPath: /usr/src/app/run/secrets/archiver/
+            {{- end }} 
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NODE_CONFIG_DIR
+              value: /usr/src/app/run/config:/usr/src/app/config
+            - name: SYSLOG_PORTAL_LOGGER_LEVEL
+              value: "{{ .Values.logLevel }}"
+            - name: SYSLOG_PORTAL_ARCHIVER_ENABLED
+              value: "{{ .Values.archiver.enabled }}"
+            - name: SYSLOG_PORTAL_ARCHIVER_HOSTNAME
+              value: "{{ .Values.archiver.hostname }}"
+            {{- if .Values.archiver.authEnabled }}
+            - name: SYSLOG_PORTAL_ARCHIVER_USERNAME_FILE
+              value: "{{ default "/usr/src/app/run/secrets/archiver/username" .Values.archiver.usernameFile }}"
+            - name: SYSLOG_PORTAL_ARCHIVER_PASSWORD_FILE
+              value: "{{ default "/usr/src/app/run/secrets/archiver/password" .Values.archiver.passwordFile }}"
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

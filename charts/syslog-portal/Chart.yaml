@@ -1,0 +1,8 @@
+apiVersion: v2
+name: syslog-portal
+description: A Helm chart to launch a syslog-portal for ingesting syslog streams
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+maintainers:
+  - name: bryopsida

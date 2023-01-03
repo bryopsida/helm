@@ -1,0 +1,57 @@
+replicaCount: 1
+image:
+  repository: ghcr.io/bryopsida/syslog-portal
+  pullPolicy: Always
+  tag: "main"
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9091"
+podSecurityContext:
+  fsGroup: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 514
+resources:
+  limits:
+    cpu: 256m
+    memory: 128Mi
+  requests:
+    cpu: 256m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+logLevel: "info"
+archiver:
+  enabled: false
+  authEnabled: false
+  type: 'MONGO'
+  hostname: ~
+  port: 27017
+  username: ~
+  password: ~
+  usernameFile: ~
+  passwordFile: ~
+  existingSecret: ~
