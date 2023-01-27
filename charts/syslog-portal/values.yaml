@@ -18,7 +18,7 @@ podSecurityContext:
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1000
@@ -50,14 +50,14 @@ archiver:
   # -- Toggle usage of auth in the archiver
   authEnabled: false
   # -- Set the type of archiver, can be MONGO or POUCHDB
-  type: 'MONGO'
+  type: "MONGO"
   # -- Controls the interval between syncs to the remote dabase when using the POUCHDB archiver
   syncInterval: 300000
   # -- The location of the local database store when using the POUCHDB archiver
   databaseFolder: /opt/syslog-portal/data
   # -- Hostname of the remote destination targetted by the archiver
   hostname: ~
-  # -- Destination port targetted by the archiver 
+  # -- Destination port targetted by the archiver
   port: 27017
   # -- Username for the remote destination of the archiver
   username: ~
