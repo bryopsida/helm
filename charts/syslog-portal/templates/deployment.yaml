@@ -36,7 +36,7 @@ spec:
               - key: production.json
                 path: production.json
         - name: archiver-database
-          emptyrDir: {}
+          emptyDir: {}
         {{- if .Values.archiver.enabled }}
         - name: archiver-credentials
           secret:
