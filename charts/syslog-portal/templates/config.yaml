@@ -9,7 +9,9 @@ data:
         "archiver": {
           "type": "{{ default "MONGO" .Values.archiver.type }}",
           "hostname": "{{ .Values.archiver.hostname }}",
-          "port": {{ default 27017 .Values.archiver.port }}
+          "port": {{ default 27017 .Values.archiver.port }},
+          "syncInterval": {{ .Values.archiver.syncInterval }},
+          "databaseFolder": "{{ .Values.archiver.databaseFolder }}"
         }
       }
     }
