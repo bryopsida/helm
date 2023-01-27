@@ -35,6 +35,8 @@ spec:
             items:
               - key: production.json
                 path: production.json
+        - name: archiver-database
+          emptyrDir: {}
         {{- if .Values.archiver.enabled }}
         - name: archiver-credentials
           secret:
@@ -68,6 +70,8 @@ spec:
             - name: config
               mountPath: /usr/src/app/run/config/
               readOnly: true
+            - name: archiver-database
+              mountPath: {{ .Values.archiver.databaseFolder }}
             {{- if .Values.archiver.enabled }}
             - name: archiver-credentials
               mountPath: /usr/src/app/run/secrets/archiver/
@@ -81,8 +85,6 @@ spec:
               value: "{{ .Values.logLevel }}"
             - name: SYSLOG_PORTAL_ARCHIVER_ENABLED
               value: "{{ .Values.archiver.enabled }}"
-            - name: SYSLOG_PORTAL_ARCHIVER_HOSTNAME
-              value: "{{ .Values.archiver.hostname }}"
             {{- if .Values.archiver.authEnabled }}
             - name: SYSLOG_PORTAL_ARCHIVER_USERNAME_FILE
               value: "{{ default "/usr/src/app/run/secrets/archiver/username" .Values.archiver.usernameFile }}"
