@@ -1,6 +1,6 @@
 # syslog-portal
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 A Helm chart to launch a syslog-portal for ingesting syslog streams
 
@@ -15,16 +15,18 @@ A Helm chart to launch a syslog-portal for ingesting syslog streams
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| archiver.authEnabled | bool | `false` |  |
-| archiver.enabled | bool | `false` |  |
-| archiver.existingSecret | string | `nil` |  |
-| archiver.hostname | string | `nil` |  |
-| archiver.password | string | `nil` |  |
-| archiver.passwordFile | string | `nil` |  |
-| archiver.port | int | `27017` |  |
-| archiver.type | string | `"MONGO"` |  |
-| archiver.username | string | `nil` |  |
-| archiver.usernameFile | string | `nil` |  |
+| archiver.authEnabled | bool | `false` | Toggle usage of auth in the archiver |
+| archiver.databaseFolder | string | `"/opt/syslog-portal/data"` | The location of the local database store when using the POUCHDB archiver |
+| archiver.enabled | bool | `false` | Toggle archiving the data to a remote system, if disabled stdout is the destination |
+| archiver.existingSecret | string | `nil` | Name of an existing secret |
+| archiver.hostname | string | `nil` | Hostname of the remote destination targetted by the archiver |
+| archiver.password | string | `nil` | Password for the remote destination of the archiver |
+| archiver.passwordFile | string | `nil` | Path to a password file |
+| archiver.port | int | `27017` | Destination port targetted by the archiver  |
+| archiver.syncInterval | int | `300000` | Controls the interval between syncs to the remote dabase when using the POUCHDB archiver |
+| archiver.type | string | `"MONGO"` | Set the type of archiver, can be MONGO or POUCHDB |
+| archiver.username | string | `nil` | Username for the remote destination of the archiver |
+| archiver.usernameFile | string | `nil` | Path to a username file |
 | autoscaling.enabled | bool | `true` |  |
 | autoscaling.maxReplicas | int | `10` |  |
 | autoscaling.minReplicas | int | `3` |  |
