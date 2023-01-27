@@ -22,7 +22,7 @@ A Helm chart to launch a syslog-portal for ingesting syslog streams
 | archiver.hostname | string | `nil` | Hostname of the remote destination targetted by the archiver |
 | archiver.password | string | `nil` | Password for the remote destination of the archiver |
 | archiver.passwordFile | string | `nil` | Path to a password file |
-| archiver.port | int | `27017` | Destination port targetted by the archiver  |
+| archiver.port | int | `27017` | Destination port targetted by the archiver |
 | archiver.syncInterval | int | `300000` | Controls the interval between syncs to the remote dabase when using the POUCHDB archiver |
 | archiver.type | string | `"MONGO"` | Set the type of archiver, can be MONGO or POUCHDB |
 | archiver.username | string | `nil` | Username for the remote destination of the archiver |
