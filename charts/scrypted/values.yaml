@@ -35,10 +35,10 @@ securityContext:
      - 'All'
     # -- Add required linux sys capabilities back in, s6 escalates to root
     add:
-    - 'setuid'
-    - 'setgid'
-    - 'chown'
-    - 'DAC_OVERRIDE'
+     - 'setuid'
+     - 'setgid'
+     - 'chown'
+     - 'DAC_OVERRIDE'
 
 storage:
   # -- Amount of storage space to allocate for scrypted local state, this is mapped to /server/volume
