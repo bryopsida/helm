@@ -4,6 +4,12 @@
 
 A Helm chart for managing scrypted in Kubernetes
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| bryopsida |  |  |
+
 ## Requirements
 
 Kubernetes: `>= 1.20.0`
