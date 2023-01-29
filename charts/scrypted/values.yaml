@@ -1,0 +1,56 @@
+image:
+  repository: ghcr.io/koush/scrypted
+  pullPolicy: Always
+  tag: latest
+
+# -- Optional pull secret if you use your own image that's in a private registry
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+# -- Needs to be enabled for mDNS to function with devices outside of the kubernetes cluster
+hostNetwork: true
+# -- Used to control container port mapping to host ports, needed for homekit pairing
+ports: []
+  # - name: cam-1
+  #   containerPort: 35911
+  #   hostPort: 35911
+  #   protocol: TCP
+securityContext:
+  # -- Lock down the root file system
+  readOnlyRootFilesystem: true
+  # -- Run as non root user
+  runAsUser: 2000
+  runAsGroup: 2000
+  capabilities:
+    # -- Drop all linux sys capabilities
+    drop:
+      - 'All'
+    # -- Add required linux sys capabilities back in, s6 escalates to root
+    add:
+      - 'setuid'
+      - 'setgid'
+      - 'chown'
+      - 'DAC_OVERRIDE'
+
+storage:
+  # -- Amount of storage space to allocate for scrypted local state, this is mapped to /server/volume
+  size: 10Gi
+  # -- Optional storage class name, if not provided it uses the default storage class
+  className: ~
+
+# -- Resource limits applied to the container
+resources: {}
+# -- Target a node
+nodeSelector: {}
+# -- What taints this container can tolerate when making scheduling decisions
+tolerations: []
+# -- Preferred nodes
+affinity: {}
