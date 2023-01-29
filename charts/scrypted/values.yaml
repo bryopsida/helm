@@ -15,6 +15,11 @@ serviceAccount:
 podAnnotations: {}
 podSecurityContext: {}
 hostNetwork: true
+ports: []
+  # - name: cam-1
+  #   containerPort: 35911
+  #   hostPort: 35911
+  #   protocol: TCP
 securityContext:
   readOnlyRootFilesystem: true
   runAsUser: 2000

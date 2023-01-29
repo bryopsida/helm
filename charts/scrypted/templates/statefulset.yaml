@@ -79,14 +79,16 @@ spec:
               containerPort: 11080
               hostPort: 11080
               protocol: TCP
-            - name: scrypted
-              containerPort: 34344
-              hostPort: 34344
-              protocol: TCP
             - name: https
               containerPort: 10443
               hostPort: 10443
               protocol: TCP
+            {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              hostPort: {{ .hostPort }}
+              protocol: {{ .protocol }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /
