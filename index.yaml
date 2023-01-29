@@ -53,6 +53,18 @@ entries:
   syslog-portal:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-01-29T02:47:25.432347878Z"
+    description: A Helm chart to launch a syslog-portal for ingesting syslog streams
+    digest: 5a4e30af15a5a749a2f277f82f954956682a30dd10e72108d02b079d1b609e3e
+    maintainers:
+    - name: bryopsida
+    name: syslog-portal
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.3.0/syslog-portal-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2023-01-27T04:02:47.612907689Z"
     description: A Helm chart to launch a syslog-portal for ingesting syslog streams
     digest: fd382cd87cc1b6b5b17aa1cbe60956e80f5d76f7bcf32f9edfabb4c2db4984b9
@@ -75,4 +87,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-27T04:02:47.612923389Z"
+generated: "2023-01-29T02:47:25.432360178Z"
