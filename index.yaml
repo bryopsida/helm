@@ -50,6 +50,19 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/openmct-0.1.0/openmct-0.1.0.tgz
     version: 0.1.0
+  scrypted:
+  - apiVersion: v2
+    created: "2023-01-29T22:28:25.017719292Z"
+    description: A Helm chart for managing scrypted in Kubernetes
+    digest: 271d667b9418a87fc8638d93d70131405503161d146faf6585181f624b4de8c1
+    kubeVersion: '>= 1.20.0'
+    maintainers:
+    - name: bryopsida
+    name: scrypted
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/scrypted-0.1.0/scrypted-0.1.0.tgz
+    version: 0.1.0
   syslog-portal:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -87,4 +100,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-29T02:47:25.432360178Z"
+generated: "2023-01-29T22:28:25.017735892Z"
