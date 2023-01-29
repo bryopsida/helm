@@ -49,6 +49,16 @@ spec:
           emptyDir: {}
         - name: npm-cache
           emptyDir: {}
+        {{- if .Values.enableV4LHWAcceleration }}
+        - name: v4l
+          hostPath:
+            path: /dev/v4l
+        {{- end }}
+        {{- range .Values.passThroughDevices }}
+        - name: {{ .name }}
+          hostPath:
+            path: {{ .path }}
+        {{- end }}
       initContainers:
         # this moves paths that are touched by the supervisor system out to ephemereal volumes
         - name: set-permissions
@@ -110,6 +120,14 @@ spec:
             mountPath: /var/run
           - name: avahi
             mountPath: /etc/avahi
+          {{- if .Values.enableV4LHWAcceleration }}
+          - mountPath: /dev/v4l
+            name: v4l
+          {{- end }}
+          {{- range .Values.passThroughDevices }}
+          - name: {{ .name }}
+            mountPath: {{ .path }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
