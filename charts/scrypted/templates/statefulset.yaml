@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "scrypted.fullname" . }}
+  labels:
+    {{- include "scrypted.labels" . | nindent 4 }}
+spec:
+  serviceName: "scrypted"
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "scrypted.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: app
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.storage.className }}
+      resources:
+        requests:
+          storage: {{ .Values.storage.size | default "10Gi" }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "scrypted.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "scrypted.serviceAccountName" . }}
+      # required for mDNS and homekit pairing
+      hostNetwork: {{ .Values.hostNetwork }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
+        - name: avahi
+          emptyDir: {}
+        - name: dbus
+          emptyDir: {}
+        - name: npm-cache
+          emptyDir: {}
+      initContainers:
+        # this moves paths that are touched by the supervisor system out to ephemereal volumes
+        - name: set-permissions
+          image: busybox
+          command:
+            - 'sh'
+            - '-c'
+            - 'chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.runAsGroup }} /mnt/*'
+          volumeMounts:
+            - name: app
+              mountPath: /mnt/volume
+            - name: run
+              mountPath: /mnt/run
+            - name: var-run
+              mountPath: /mnt/var/run
+            - name: avahi
+              mountPath: /mnt/etc/avahi
+            - name: npm-cache
+              mountPath: /mnt/.npm
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 11080
+              hostPort: 11080
+              protocol: TCP
+            - name: scrypted
+              containerPort: 34344
+              hostPort: 34344
+              protocol: TCP
+            - name: https
+              containerPort: 10443
+              hostPort: 10443
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: app
+            mountPath: /server/volume
+          - name: run
+            mountPath: /run
+          - name: npm-cache
+            mountPath: /.npm
+          - name: var-run
+            mountPath: /var/run
+          - name: avahi
+            mountPath: /etc/avahi
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
