@@ -69,3 +69,8 @@ archiver:
   passwordFile: ~
   # -- Name of an existing secret
   existingSecret: ~
+  # -- List of keys, in order of priority, that will be used for partition keys if applicable
+  partitionKeyPriorityList:
+    - app
+    - hostname
+    - severity
