@@ -1,6 +1,6 @@
 # syslog-portal
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 A Helm chart to launch a syslog-portal for ingesting syslog streams
 
@@ -20,6 +20,7 @@ A Helm chart to launch a syslog-portal for ingesting syslog streams
 | archiver.enabled | bool | `false` | Toggle archiving the data to a remote system, if disabled stdout is the destination |
 | archiver.existingSecret | string | `nil` | Name of an existing secret |
 | archiver.hostname | string | `nil` | Hostname of the remote destination targetted by the archiver |
+| archiver.partitionKeyPriorityList | list | `["app","hostname","severity"]` | List of keys, in order of priority, that will be used for partition keys if applicable |
 | archiver.password | string | `nil` | Password for the remote destination of the archiver |
 | archiver.passwordFile | string | `nil` | Path to a password file |
 | archiver.port | int | `27017` | Destination port targetted by the archiver |

@@ -11,7 +11,8 @@ data:
           "hostname": "{{ .Values.archiver.hostname }}",
           "port": {{ default 27017 .Values.archiver.port }},
           "syncInterval": {{ .Values.archiver.syncInterval }},
-          "databaseFolder": "{{ .Values.archiver.databaseFolder }}"
+          "databaseFolder": "{{ .Values.archiver.databaseFolder }}",
+          "partitionKeyPriorityList": {{ .Values.archiver.partitionKeyPriorityList | toJson }}
         }
       }
     }
