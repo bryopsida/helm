@@ -1,6 +1,6 @@
 # scrypted
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for managing scrypted in Kubernetes
 
@@ -19,6 +19,7 @@ Kubernetes: `>= 1.20.0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Preferred nodes |
+| enableV4LHWAcceleration | bool | `false` | Enable passing through Video4Linux device for ffmpeg hwaccel |
 | fullnameOverride | string | `""` |  |
 | hostNetwork | bool | `true` | Needs to be enabled for mDNS to function with devices outside of the kubernetes cluster |
 | image.pullPolicy | string | `"Always"` |  |
@@ -27,6 +28,7 @@ Kubernetes: `>= 1.20.0`
 | imagePullSecrets | list | `[]` | Optional pull secret if you use your own image that's in a private registry |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` | Target a node |
+| passThroughDevices | list | `[]` | Pass host devices through to the container |
 | podAnnotations | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
 | ports | list | `[]` | Used to control container port mapping to host ports, needed for homekit pairing |

@@ -7,12 +7,16 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
+# -- Enable passing through Video4Linux device for ffmpeg hwaccel
+enableV4LHWAcceleration: false
 serviceAccount:
   create: true
   annotations: {}
   name: ""
-
+# -- Pass host devices through to the container
+passThroughDevices: []
+#  - name: video-4-linux
+#    path: /dev/v4l
 podAnnotations: {}
 podSecurityContext: {}
 # -- Needs to be enabled for mDNS to function with devices outside of the kubernetes cluster
