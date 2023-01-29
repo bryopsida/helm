@@ -3,4 +3,4 @@ name: scrypted
 description: A Helm chart for managing scrypted in Kubernetes
 type: application
 version: 0.1.0
-kubeVersion: ">= 1.2.0"
+kubeVersion: ">= 1.20.0"
