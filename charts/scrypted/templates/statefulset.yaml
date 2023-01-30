@@ -49,6 +49,10 @@ spec:
           emptyDir: {}
         - name: npm-cache
           emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
         {{- if .Values.enableV4LHWAcceleration }}
         - name: v4l
           hostPath:
@@ -78,6 +82,10 @@ spec:
               mountPath: /mnt/etc/avahi
             - name: npm-cache
               mountPath: /mnt/.npm
+            - name: cache
+              mountPath: /mnt/.cache
+            - name: tmp
+              mountPath: /mnt/tmp
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -120,6 +128,10 @@ spec:
             mountPath: /var/run
           - name: avahi
             mountPath: /etc/avahi
+          - name: cache
+            mountPath: /.cache
+          - name: tmp
+            mountPath: /tmp
           {{- if .Values.enableV4LHWAcceleration }}
           - mountPath: /dev/v4l
             name: v4l
