@@ -52,6 +52,18 @@ entries:
     version: 0.1.0
   scrypted:
   - apiVersion: v2
+    created: "2023-01-30T01:20:41.640553038Z"
+    description: A Helm chart for managing scrypted in Kubernetes
+    digest: 539af88644a624ed6fabb52bf3d332677fc49f63e25af275fdca90c26c2f3a85
+    kubeVersion: '>= 1.20.0'
+    maintainers:
+    - name: bryopsida
+    name: scrypted
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/scrypted-0.3.0/scrypted-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2023-01-29T23:11:34.46880932Z"
     description: A Helm chart for managing scrypted in Kubernetes
     digest: 137869d79905d66c6d14d02e6d91f06f9be43674527c07cc3bcf3dab08b90692
@@ -112,4 +124,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-29T23:11:34.46882142Z"
+generated: "2023-01-30T01:20:41.640569539Z"
