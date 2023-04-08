@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "plex.fullname" . }}
+  labels:
+    {{- include "plex.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "plex.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "plex.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: plex-media
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.mediaStorageClass }}
+      storageClassName: {{ .Values.mediaStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.mediaStorageSize }}
+  - metadata:
+      name: plex-transcode
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.transcodeStorageClass }}
+      storageClassName: {{ .Values.transcodeStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.transcodeStorageSize }}
+  - metadata:
+      name: plex-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.configStorageSize }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "plex.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "plex.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: plex-media
+          persistentVolumeClaim:
+            claimName: plex-media
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: TZ
+            value: "{{ .Values.timezone }}"
+          - name: PLEX_CLAIM
+            value: "{{ .Values.claimToken }}"
+          volumeMounts:
+          - mountPath: "/data"
+            name: plex-media
+          - mountPath: "/transcode"
+            name: plex-transcode
+          - mountPath: "/config"
+            name: plex-config
+          ports:
+            - name: plex
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /identity
+              port: plex
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /identity
+              port: plex
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
