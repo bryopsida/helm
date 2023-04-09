@@ -60,7 +60,7 @@ env: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-# -- 
+# -- Plex media storage class
 mediaStorageClass: ~
 # -- Plex media storage space
 mediaStorageSize: 256Gi
@@ -78,7 +78,7 @@ nodeSelector: {}
 tolerations: []
 # -- Affinity settings for schedulging
 affinity: {}
-# -- Timezone 
+# -- Timezone
 timezone: US/Central
 # -- Plex claim token
 claimToken: CHANGE_ME
