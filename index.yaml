@@ -50,6 +50,18 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/openmct-0.1.0/openmct-0.1.0.tgz
     version: 0.1.0
+  plex:
+  - apiVersion: v2
+    created: "2023-04-09T18:51:27.358961789Z"
+    description: A Helm chart to deploy plex with arr sidecars
+    digest: 8faa1a56ce0037109792fe26c726d6be4ecc6a977cd422cdf88248d51168665f
+    maintainers:
+    - name: bryopsida
+    name: plex
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/plex-0.1.0/plex-0.1.0.tgz
+    version: 0.1.0
   scrypted:
   - apiVersion: v2
     created: "2023-01-30T01:20:41.640553038Z"
@@ -124,4 +136,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-30T01:20:41.640569539Z"
+generated: "2023-04-09T18:51:27.358977989Z"
