@@ -1,0 +1,181 @@
+# Default values for plex.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- plex image settings
+image:
+  repository: ghcr.io/linuxserver/plex
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+# -- If a pull secret is needed for you custom images
+imagePullSecrets: []
+# -- Override names
+nameOverride: ""
+# -- override full name
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- custom annotations for pod
+podAnnotations: {}
+
+# -- security context for pod
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Security contexts for containers, will be applied to all containers
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- Plex service settings, by default cluster internal, change to load balancer to expose
+service:
+  type: ClusterIP
+  port: 32400
+
+# -- Plex resource allocations, by default no limits
+resources: {}
+# -- Custom env vars for plex container
+env: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+# -- Plex media storage class
+mediaStorageClass: ~
+# -- Plex media storage space
+mediaStorageSize: 256Gi
+# -- Plex transcode storage class, if not set default storage class is used
+transcodeStorageClass: ~
+# -- Plex transcode scratch space size
+transcodeStorageSize: 64Gi
+# -- Plex config storage class, if not set uses default storage class is used
+configStorageClass: ~
+# -- Plex storage volume size
+configStorageSize: 32Gi
+# -- Scope to a specific node
+nodeSelector: {}
+# -- Node taint tolerations
+tolerations: []
+# -- Affinity settings for schedulging
+affinity: {}
+# -- Timezone
+timezone: US/Central
+# -- Plex claim token
+claimToken: CHANGE_ME
+virtualService:
+  # -- Enable management of a istio virtual service
+  enabled: false
+  # -- Name of the istio ingress in this format <namespace>/<name>
+  gateway: istio-ingress/gateway
+  hosts: []
+  # -- Set the cluster domain, the service reference is a FQDN
+  clusterDomain: cluster.local
+# -- Extra volumes to mount to the pod, these will be available to all sidecars via volumeMounts
+volumes: []
+# -- Extra volume mounts for the plex container
+volumeMounts: []
+# -- Control settings for the sonarr sidecar
+sonarr:
+  # -- Enable the sonarr sidecar
+  enabled: false
+  # -- Set where sonarr image settings
+  image:
+    repository: ghcr.io/linuxserver/sonarr
+    pullPolicy: Always
+    tag: "latest"
+  # -- Extra volume mounts for the container
+  volumeMounts: []
+  # -- Sonarr resource allocations, by default no limits
+  resources: {}
+  # -- Custom env vars for sonarr container
+  env: {}
+# -- Control settings for the radarr sidecar
+radarr:
+  # -- Control whether the radarr side car runs
+  enabled: false
+  # -- Control radarr image settings
+  image:
+    repository: ghcr.io/linuxserver/radarr
+    pullPolicy: Always
+    tag: "latest"
+  # -- Mount extra volumes into the radarr sidecar
+  volumeMounts: []
+  # -- Radarr resource allocations, by default no limits
+  resources: {}
+  # -- Custom env vars for radarr container
+  env: {}
+# -- Control qbittorrent settings
+qbittorrent:
+  # -- Control running of the qbittorrent sidecar
+  enabled: false
+  # -- Control qbitorrent image settings
+  image:
+    repository: ghcr.io/linuxserver/qbittorrent
+    pullPolicy: Always
+    tag: "latest"
+  # -- Control the qbittorrent volume mounts
+  volumeMounts: []
+  # -- qbittorrent resource allocations, by default no limits
+  resources: {}
+  # -- Custom env vars for qbittorrent container
+  env: {}
+# -- Control prowlarr settings
+prowlarr:
+  # -- Control running the prowlarrr sidecar
+  enabled: false
+  # -- Control prowlarr image settings
+  image:
+    repository: ghcr.io/linuxserver/prowlarr
+    pullPolicy: Always
+    tag: "latest"
+  # -- Mount extra volumes into the prowlarr sidecar
+  volumeMounts: []
+  # -- Prowlarr resource allocations, by default no limits
+  resources: {}
+  # -- Custom env vars for prowlarr container
+  env: {}
+overseerr:
+  # -- Control running the overseerr sidecar
+  enabled: false
+  # -- Control overseerr image settings
+  image:
+    repository: ghcr.io/linuxserver/overseerr
+    pullPolicy: Always
+    tag: "latest"
+  # -- Mount extra volumes into the overseerr sidecar
+  volumeMounts: []
+  # -- Prowlarr resource overseerr, by default no limits
+  resources: {}
+  # -- Custom env vars for overseerr container
+  env: {}
+  # -- Listening port for overseerr
+  port: 5055
+  # -- virtual service settings for overseerr
+  virtualService:
+    # -- Enable management of a istio virtual service
+    enabled: false
+    # -- Name of the istio ingress in this format <namespace>/<name>
+    gateway: istio-ingress/gateway
+    hosts: []
+    # -- Set the cluster domain, the service reference is a FQDN
+    clusterDomain: cluster.local

@@ -1,0 +1,54 @@
+---
+{{- if .Values.virtualService.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "plex.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - {{ .Values.virtualService.gateway }}
+  hosts:
+  {{- range .Values.virtualService.hosts }}
+  - {{ . }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: /
+    name: plex-route
+    route:
+    - destination:
+        host: "{{ include "plex.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.virtualService.clusterDomain }}"
+        port:
+          number: {{ .Values.service.port }}
+{{- end }}
+{{- if .Values.overseerr.virtualService.enabled }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}-overseerr
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "plex.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - {{ .Values.overseerr.virtualService.gateway }}
+  hosts:
+  {{- range .Values.overseerr.virtualService.hosts }}
+  - {{ . }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: /
+    name: overseerr-route
+    route:
+    - destination:
+        host: "{{ include "plex.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.overseerr.virtualService.clusterDomain }}"
+        port:
+          number: {{ .Values.overseerr.port }}
+{{- end }}
