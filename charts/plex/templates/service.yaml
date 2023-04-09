@@ -11,5 +11,11 @@ spec:
       targetPort: plex
       protocol: TCP
       name: plex
+    {{- if .Values.overseerr.enabled }}
+    - port: {{ .Values.overseerr.port }}
+      targetPort: overseerr
+      protocol: TCP
+      name: overseerr
+    {{- end }}
   selector:
     {{- include "plex.selectorLabels" . | nindent 4 }}
