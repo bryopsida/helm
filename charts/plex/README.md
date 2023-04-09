@@ -1,22 +1,28 @@
 # plex
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
-A Helm chart for Kubernetes
+A Helm chart to deploy plex with arr sidecars
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| bryopsida |  |  |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity settings for schedulging |
-| claimToken | string | `nil` | Plex claim token |
+| claimToken | string | `"CHANGE_ME"` | Plex claim token |
 | configStorageClass | string | `nil` | Plex config storage class, if not set uses default storage class is used |
 | configStorageSize | string | `"32Gi"` | Plex storage volume size |
 | env | object | `{}` | Custom env vars for plex container |
 | fullnameOverride | string | `""` | override full name |
 | image | object | `{"pullPolicy":"Always","repository":"ghcr.io/linuxserver/plex","tag":"latest"}` | plex image settings |
 | imagePullSecrets | list | `[]` | If a pull secret is needed for you custom images |
-| mediaStorageClass | string | `nil` |  |
+| mediaStorageClass | string | `nil` | Plex media storage class |
 | mediaStorageSize | string | `"256Gi"` | Plex media storage space |
 | nameOverride | string | `""` | Override names |
 | nodeSelector | object | `{}` | Scope to a specific node |
@@ -62,7 +68,7 @@ A Helm chart for Kubernetes
 | sonarr.image | object | `{"pullPolicy":"Always","repository":"ghcr.io/linuxserver/sonarr","tag":"latest"}` | Set where sonarr image settings |
 | sonarr.resources | object | `{}` | Sonarr resource allocations, by default no limits |
 | sonarr.volumeMounts | list | `[]` | Extra volume mounts for the container |
-| timezone | string | `"US/Central"` | Timezone  |
+| timezone | string | `"US/Central"` | Timezone |
 | tolerations | list | `[]` | Node taint tolerations |
 | transcodeStorageClass | string | `nil` | Plex transcode storage class, if not set default storage class is used |
 | transcodeStorageSize | string | `"64Gi"` | Plex transcode scratch space size |
