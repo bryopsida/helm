@@ -5,8 +5,9 @@
 {{- end }}
 {{- end }}
 
+
 {{- define "plex.volume-mounts" -}}
-{{- range . }}
+{{- if . }}
 {{ . | toYaml }}
 {{- end }}
 {{- end }}
@@ -159,9 +160,9 @@ spec:
         - name: plex-media
           persistentVolumeClaim:
             claimName: plex-media
-        {{- range .Values.volumes }}
-        {{ . | toYaml | nindent 8 }} 
-        {{- end }}
+      {{- if .Values.volumes }}
+        {{ .Values.volumes | toYaml | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -172,7 +173,10 @@ spec:
 {{ include "plex.time-zone" . | indent 10 }}
 {{ include "plex.env-vars" .env | indent 10 }}
           - name: PLEX_CLAIM
-            value: "{{ .Values.claimToken }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-claim-token"
+                key: "claim-token"
           volumeMounts:
           - mountPath: "/data"
             name: plex-media

@@ -81,7 +81,7 @@ affinity: {}
 # -- Timezone 
 timezone: US/Central
 # -- Plex claim token
-claimToken: ~
+claimToken: CHANGE_ME
 virtualService:
   # -- Enable management of a istio virtual service
   enabled: false
