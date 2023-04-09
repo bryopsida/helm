@@ -1,0 +1,330 @@
+{{- define "jellyfin.env-vars" -}}
+{{- range $key, $value := . }}
+- name: {{ $key | quote }}
+  value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+
+
+{{- define "jellyfin.volume-mounts" -}}
+{{- if . }}
+{{ . | toYaml }}
+{{- end }}
+{{- end }}
+
+{{- define "jellyfin.time-zone" -}}
+- name: TZ
+  value: "{{ .Values.timezone }}"
+{{- end }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "jellyfin.fullname" . }}
+  labels:
+    {{- include "jellyfin.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "jellyfin.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "jellyfin.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: jellyfin-media
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.mediaStorageClass }}
+      storageClassName: {{ .Values.mediaStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.mediaStorageSize }}
+  - metadata:
+      name: jellyfin-transcode
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.transcodeStorageClass }}
+      storageClassName: {{ .Values.transcodeStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.transcodeStorageSize }}
+  - metadata:
+      name: jellyfin-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.configStorageSize }}
+  - metadata:
+      name: sonarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: lidarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: radarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: bazarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: readarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: prowlarr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: overseerr-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  - metadata:
+      name: qtorrent-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.configStorageClass }}
+      storageClassName: {{ .Values.configStorageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: 512Mi
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jellyfin.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jellyfin.serviceAccountName" . }}
+      readinessProbe:
+        httpGet:
+          path: /
+          port: jellyfin
+        initialDelaySeconds: 15
+        timeoutSeconds: 5
+      livenessProbe:
+        httpGet:
+          path: /
+          port: jellyfin
+        initialDelaySeconds: 10
+        timeoutSeconds: 10
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: jellyfin-media
+          persistentVolumeClaim:
+            claimName: jellyfin-media
+      {{- if .Values.volumes }}
+        {{ .Values.volumes | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- if .Values.virtualService.enabled }}
+          - name: JELLYFIN_PublishedServerUrl
+            value: {{ (index .Values.virtualService.hosts 0) | quote }}
+          {{- end }}
+{{ include "jellyfin.time-zone" . | indent 10 }}
+{{ include "jellyfin.env-vars" .env | indent 10 }}
+          volumeMounts:
+          - mountPath: "/data"
+            name: jellyfin-media
+          - mountPath: "/transcode"
+            name: jellyfin-transcode
+          - mountPath: "/config"
+            name: jellyfin-config
+{{ include "jellyfin.volume-mounts" .Values.volumeMounts | indent 10 }}
+          ports:
+            - name: jellyfin
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources: 
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.sonarr.enabled }}
+        - name: sonarr
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.sonarr.image.repository }}:{{ .Values.sonarr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sonarr.image.pullPolicy }}
+          env:
+{{ include "jellyfin.time-zone" . | nindent 10 }}
+{{ include "jellyfin.env-vars" .Values.sonarr.env | indent 10 }}
+          ports:
+            - name: sonarr
+              containerPort: 8989
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: sonarr-config
+            - mountPath: "/data"
+              name: jellyfin-media
+{{ include "jellyfin.volume-mounts" .Values.sonarr.volumeMounts | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.radarr.enabled }}
+        - name: radarr
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.radarr.image.repository }}:{{ .Values.radarr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.radarr.image.pullPolicy }}
+          env:
+{{ include "jellyfin.time-zone" . | indent 10 }}
+{{ include "jellyfin.env-vars" .Values.radarr.env | indent 10 }}
+          ports:
+            - name: radarr
+              containerPort: 7878
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: radarr-config
+            - mountPath: "/data"
+              name: jellyfin-media
+{{ include "jellyfin.volume-mounts" .Values.radarr.volumeMounts | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.qbittorrent.enabled }}
+        - name: qbittorrent
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.qbittorrent.image.repository }}:{{ .Values.qbittorrent.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.qbittorrent.image.pullPolicy }}
+          env:
+{{ include "jellyfin.time-zone" . | indent 10 }}
+{{ include "jellyfin.env-vars" .Values.qbittorrent.env | indent 10 }}
+          - name: WEBUI_PORT
+            value: "8080"
+          ports:
+            - name: qbittorrent
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: qtorrent-config
+            - mountPath: "/data"
+              name: jellyfin-media
+{{ include "jellyfin.volume-mounts" .Values.qbittorrent.volumeMounts | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- end }}
+      {{- if .Values.prowlarr.enabled }}
+        - name: prowlarr
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.prowlarr.image.repository }}:{{ .Values.prowlarr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.prowlarr.image.pullPolicy }}
+          env:
+{{ include "jellyfin.time-zone" . | indent 10 }}
+{{ include "jellyfin.env-vars" .Values.prowlarr.env | indent 10 }}
+          {{- range .Values.prowlarr.env }}
+          - name: 
+          {{- end }}
+          ports:
+            - name: prowlarr
+              containerPort: 9696
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: prowlarr-config
+{{ include "jellyfin.volume-mounts" .Values.prowlarr.volumeMounts | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- end }}
+      {{- if .Values.overseerr.enabled }}
+        - name: overseerr
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.overseerr.image.repository }}:{{ .Values.overseerr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.overseerr.image.pullPolicy }}
+          env:
+{{ include "jellyfin.time-zone" . | indent 10 }}
+{{ include "jellyfin.env-vars" .Values.overseerr.env | indent 10 }}
+          {{- range .Values.overseerr.env }}
+          - name: 
+          {{- end }}
+          ports:
+            - name: overseerr
+              containerPort: {{ .Values.overseerr.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/config"
+              name: overseerr-config
+{{ include "jellyfin.volume-mounts" .Values.prowlarr.volumeMounts | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
