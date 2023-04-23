@@ -34,6 +34,10 @@ spec:
             items:
               - key: frigate.yaml
                 path: config.yaml
+        - name: shared-memory
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.shmSize }}
         {{- if .Values.storage.enabled }}
         - name: database-volume
           persistentVolumeClaim:
@@ -52,6 +56,29 @@ spec:
           hostPath:
             path: /dev/bus/usb
         {{- end }}
+        {{- if .Values.hwaccel.v4lEnabled }}
+        - name: video-10
+          hostPath:
+            path: /dev/video10
+        - name: video-11
+          hostPath:
+            path: /dev/video11
+        - name: video-12
+          hostPath:
+            path: /dev/video12
+        - name: video-13
+          hostPath:
+            path: /dev/video13
+        - name: video-14
+          hostPath:
+            path: /dev/video14
+        - name: video-15
+          hostPath:
+            path: /dev/video15
+        - name: video-16
+          hostPath:
+            path: /dev/video16
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -65,6 +92,8 @@ spec:
             - name: database-volume
               mountPath: /media/frigate/
               readOnly: false
+            - mountPath: /dev/shm
+              name: shared-memory
             {{- if .Values.hwaccel.intelEnabled }}
             - name: hwaccel-intel-dev
               mountPath: /dev/dri
@@ -72,6 +101,22 @@ spec:
             {{- if .Values.hwaccel.usbEnabled }}
             - name: hwaccel-usb-dev
               mountPath: /dev/bus/usb
+            {{- end }}
+            {{- if .Values.hwaccel.v4lEnabled }}
+            - name: video-10
+              mountPath: /dev/video10
+            - name: video-11
+              mountPath: /dev/video11
+            - name: video-12
+              mountPath: /dev/video12
+            - name: video-13
+              mountPath: /dev/video13
+            - name: video-14
+              mountPath: /dev/video14
+            - name: video-15
+              mountPath: /dev/video15
+            - name: video-16
+              mountPath: /dev/video16
             {{- end }}
           env:
           {{- range .Values.secrets }}

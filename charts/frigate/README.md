@@ -1,6 +1,6 @@
 # frigate
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.11.0](https://img.shields.io/badge/AppVersion-0.11.0-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.12.0](https://img.shields.io/badge/AppVersion-0.12.0-informational?style=flat-square)
 
 A Helm chart to deploy frigate into a kubernetes cluster
 
@@ -29,9 +29,10 @@ A Helm chart to deploy frigate into a kubernetes cluster
 | fullnameOverride | string | `""` |  |
 | hwaccel.intelEnabled | bool | `false` |  |
 | hwaccel.usbEnabled | bool | `false` |  |
+| hwaccel.v4lEnabled | bool | `false` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"blakeblackshear/frigate"` |  |
-| image.tag | string | `"0.11.1"` |  |
+| image.repository | string | `"ghcr.io/blakeblackshear/frigate"` |  |
+| image.tag | string | `"0.12.0"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `""` |  |
@@ -55,6 +56,7 @@ A Helm chart to deploy frigate into a kubernetes cluster
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
+| shmSize | string | `"128Mi"` |  |
 | storage.enabled | bool | `true` |  |
 | storage.size | string | `"10Gi"` |  |
 | storage.storageClass | string | `nil` |  |
