@@ -15,7 +15,8 @@ imagePullSecrets: []
 nameOverride: ""
 # -- override full name
 fullnameOverride: ""
-
+# -- run plex on the node's network
+hostNetwork: false
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
