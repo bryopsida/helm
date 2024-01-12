@@ -1,0 +1,142 @@
+# Default values for node-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: node
+  pullPolicy: Always
+  tag: "lts"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1001
+  runAsUser: 1001
+  runAsGroup: 1001
+
+securityContext:
+  runAsUser: 1001
+  runAsNonRoot: true
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: seed
+    configMap:
+      name: seed-config
+  - name: app-code
+    persistentVolumeClaim:
+      claimName: app-code
+  - name: npm-cache
+    persistentVolumeClaim:
+      claimName: npm-cache
+  - name: node-modules
+    persistentVolumeClaim:
+      claimName: node-modules
+
+volumeMounts:
+  - mountPath: /app
+    subPath: app-code
+    name: app-code
+  - mountPath: /app/.npm
+    subPath: npm-cache
+    name: npm-cache
+  - mountPath: /.npm
+    subPath: npm-cache
+    name: npm-cache
+  - mountPath: /app/node_modules
+    subPath: node-modules
+    name: node-modules
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# - Array of init containers
+initContainers:
+  - name: seed-container
+    image: node:lts
+    volumeMounts:
+    - name: seed
+      mountPath: "/seed"
+    - name: app-code
+      mountPath: "/app"
+      subPath: app-code
+    - name: npm-cache
+      mountPath: /home/node/.npm
+      subPath: npm-cache
+    command:
+      - "node"
+      - "/seed/seed.mjs"
+
+# - Array of storage volumes managed by the helm release
+managedStorage:
+  - name: app-code
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  - name: npm-cache
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+  - name: node-modules
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+
+virtualService:
+  # - If enabled, a virtual service is created for a istio gateway
+  enabled: false
+  # - Name of the gateway to attach the virtual service to
+  gateway: istio-ingress/default-gateway
+  # - Domain name for virtual service
+  hostname: node.example.com
+clusterDomain: cluster.local
