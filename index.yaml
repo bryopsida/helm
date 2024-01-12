@@ -55,6 +55,19 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/frigate-0.1.0/frigate-0.1.0.tgz
     version: 0.1.0
+  node-app:
+  - apiVersion: v2
+    created: "2024-01-12T01:51:41.683330523Z"
+    description: A generic helm chart for a node app, load code into pod with `kubectl
+      cp <app code foder> <pod name>:/app`. will automatically load new changes
+    digest: 0d3703cd73bba90784bd4dfc3351dce85e79a29dfb5a56ad7de0b761123f399d
+    maintainers:
+    - name: bryopsida
+    name: node-app
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/node-app-0.1.0/node-app-0.1.0.tgz
+    version: 0.1.0
   openmct:
   - apiVersion: v2
     appVersion: 2.1.3
@@ -201,4 +214,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-04T04:17:48.441932433Z"
+generated: "2024-01-12T01:51:41.683396787Z"
