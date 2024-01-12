@@ -93,7 +93,7 @@ volumeMounts:
   - mountPath: /app/node_modules
     subPath: node-modules
     name: node-modules
-  
+
 nodeSelector: {}
 
 tolerations: []
