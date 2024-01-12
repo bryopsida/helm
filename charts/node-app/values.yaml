@@ -27,10 +27,14 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 1001
+  runAsUser: 1001
+  runAsGroup: 1001
 
-securityContext: {}
+securityContext:
+  runAsUser: 1001
+  runAsNonRoot: true
   # capabilities:
   #   drop:
   #   - ALL
@@ -40,7 +44,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 3000
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -62,18 +66,34 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - name: seed
+    configMap:
+      name: seed-config
+  - name: app-code
+    persistentVolumeClaim:
+      claimName: app-code
+  - name: npm-cache
+    persistentVolumeClaim:
+      claimName: npm-cache
+  - name: node-modules
+    persistentVolumeClaim:
+      claimName: node-modules
 
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
-
+volumeMounts:
+  - mountPath: /app
+    subPath: app-code
+    name: app-code
+  - mountPath: /app/.npm
+    subPath: npm-cache
+    name: npm-cache
+  - mountPath: /.npm
+    subPath: npm-cache
+    name: npm-cache
+  - mountPath: /app/node_modules
+    subPath: node-modules
+    name: node-modules
+  
 nodeSelector: {}
 
 tolerations: []
@@ -81,15 +101,36 @@ tolerations: []
 affinity: {}
 
 # - Array of init containers
-initContainers: []
+initContainers:
+  - name: seed-container
+    image: node:lts
+    volumeMounts:
+    - name: seed
+      mountPath: "/seed"
+    - name: app-code
+      mountPath: "/app"
+      subPath: app-code
+    - name: npm-cache
+      mountPath: /home/node/.npm
+      subPath: npm-cache
+    command:
+      - "node"
+      - "/seed/seed.mjs"
 
 # - Array of storage volumes managed by the helm release
-managedStorage: []
-  # - name: volume-1
-  #   storageClassName: fast
-  #   accessModes:
-  #     - ReadWriteMany
-  #   size: 10Gi
+managedStorage:
+  - name: app-code
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  - name: npm-cache
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+  - name: node-modules
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
 
 virtualService:
   # - If enabled, a virtual service is created for a istio gateway

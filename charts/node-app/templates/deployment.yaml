@@ -37,9 +37,11 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env: {{ .Values.env | toYaml | nindent 12 }}
+          workingDir: /app
           command:
-            - 'sleep'
-            - 'infinity'
+            - 'npm'
+            - 'start'
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

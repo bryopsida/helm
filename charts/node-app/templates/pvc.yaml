@@ -1,11 +1,14 @@
 {{- range .Values.managedStorage }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .name }}
   namespace: {{ $.Release.Namespace }}
 spec:
+{{- if .storageClassName }}
   storageClassName: {{ .storageClassName }}
+{{- end }}
   accessModes: {{ .accessModes | toYaml | nindent 4 }}
   resources:
     requests:
