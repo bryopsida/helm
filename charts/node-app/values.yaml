@@ -31,7 +31,11 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 1000
+
+# -- Toggle use of probes, if you plan on pausing/break pointing app server, you'll want to disable probes
+probesEnabled: true
 
 # -- Set security context settings for the service/app container
 securityContext:
@@ -121,6 +125,8 @@ initContainers:
   #    system with snapshotting and rollback.
   - name: seed-container
     image: node:lts
+    securityContext:
+      runAsUser: 1000
     volumeMounts:
     - name: seed
       mountPath: "/seed"
