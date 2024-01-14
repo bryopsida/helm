@@ -116,7 +116,7 @@ affinity: {}
 # - Array of init containers
 initContainers:
   # -- seed container, this copies in the pacßkage.json, package-lock.json, and index.js to kick start server that passes health checks
-  #    the intent is this can be changed live and persisted in the app-code pvc as you make changes through the dev side car, when 
+  #    the intent is this can be changed live and persisted in the app-code pvc as you make changes through the dev side car, when
   #    you finish making changes for a cycle you can disable the dev side car. If the ability to rollback is important to you, use a storage
   #    system with snapshotting and rollback.
   - name: seed-container
