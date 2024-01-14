@@ -8,6 +8,14 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  strategy:
+  {{- if .Values.manyPods }}
+    type: RollingUpdate
+    rollingUpdate:
+     maxUnavailable: 1
+  {{- else }}
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       {{- include "node-app.selectorLabels" . | nindent 6 }}
@@ -60,8 +68,56 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
+        {{- if .Values.devSideCar.enabled }}
+        - name: {{ .Chart.Name }}-dev
+          securityContext:
+            {{- toYaml .Values.devSideCar.securityContext | nindent 12 }}
+          image: "{{ .Values.devSideCar.image.repository }}:{{ .Values.devSideCar.image.tag }}"
+          imagePullPolicy: {{ .Values.devSideCar.image.pullPolicy }}
+          env:
+            - name: PASSWORD_LOGIN_ENABLED
+              value: "{{ .Values.devSideCar.passwordLoginEnabled }}"
+            - name: NVM_INSTALL_ENABLED
+              value: "{{ .Values.devSideCar.nvmInstallEnabled }}"
+            - name: SDK_MAN_INSTALL_ENABLED
+              value: "{{ .Values.devSideCar.sdkManInstallEnabled }}"
+            - name: OH_MY_ZSH_INSTALL_ENABLED
+              value: "{{ .Values.devSideCar.ohMyZshInstallEnabled }}"
+            {{- if .Values.devSideCar.env }}
+            {{- toYaml .Values.devSideCar.env | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: ssh
+              containerPort: 3022
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.devSideCar.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Values.devSideCar.homePvcName }}
+              mountPath: /home/developer
+              subPath: dev-home
+              readOnly: false
+            - name: {{ .Values.devSideCar.dropbearPvcName }}
+              mountPath: /etc/dropbear
+              subPath: dropbear-config
+              readOnly: false
+            {{- if .Values.devSideCar.trustedPublicKeys }}
+            - name: authorized-keys
+              mountPath: /authorized-keys
+              subPath: public-keys
+              readOnly: true
+            {{- end }}
+            {{- if .Values.volumeMounts }}
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+            {{- end }}
+        {{- end }}
       volumes:
+        {{- if .Values.devSideCar.trustedPublicKeys }}
+        - name: authorized-keys
+          secret:
+            secretName: {{ .Release.Name }}-authorized-keys
+        {{- end }}
+      {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}

@@ -1,16 +1,21 @@
-{{- range .Values.managedStorage }}
+{{- range  $k, $v := .Values.managedStorage }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .name }}
+  name: {{ $k }}
   namespace: {{ $.Release.Namespace }}
 spec:
-{{- if .storageClassName }}
-  storageClassName: {{ .storageClassName }}
+{{- if $v.storageClassName }}
+  storageClassName: {{ $v.storageClassName }}
 {{- end }}
-  accessModes: {{ .accessModes | toYaml | nindent 4 }}
+  accessModes:
+  {{- if $.Values.manyPods }}
+    - ReadWriteMany
+  {{- else }}
+    - ReadWriteOnce
+  {{- end }}
   resources:
     requests:
-      storage: {{ .size }}
+      storage: {{ $v.size }}
 {{- end }}
