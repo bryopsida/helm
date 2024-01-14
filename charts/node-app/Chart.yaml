@@ -2,6 +2,6 @@ apiVersion: v2
 name: node-app
 description: A generic helm chart for a node app, load code into pod with `kubectl cp <app code foder> <pod name>:/app`. will automatically load new changes
 type: application
-version: 0.1.0
+version: 0.2.0
 maintainers:
   - name: bryopsida
