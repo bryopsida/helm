@@ -2,7 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# - If you plan to run with more than one pod, be sure to also set manyPods: true
 replicaCount: 1
+
+# - Adjust deployment strategy and PVC access modes to match whether multiple instances of the pods will be run at once
+manyPods: false
 
 image:
   repository: node
@@ -27,13 +31,11 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext:
-  fsGroup: 1001
-  runAsUser: 1001
-  runAsGroup: 1001
+podSecurityContext: {}
 
+# -- Set security context settings for the service/app container
 securityContext:
-  runAsUser: 1001
+  runAsUser: 1000
   runAsNonRoot: true
   # capabilities:
   #   drop:
@@ -46,6 +48,7 @@ service:
   type: ClusterIP
   port: 3000
 
+# -- Set resource allocations for the service/app container
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -58,6 +61,7 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# -- Control auto scaling settings, if you need this, you must enable `manyPods: true`
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -79,7 +83,13 @@ volumes:
   - name: node-modules
     persistentVolumeClaim:
       claimName: node-modules
-
+  - name: home
+    persistentVolumeClaim:
+      claimName: home
+  - name: dropbear
+    persistentVolumeClaim:
+      claimName: dropbear
+# -- Mount volumes onto containers
 volumeMounts:
   - mountPath: /app
     subPath: app-code
@@ -94,14 +104,21 @@ volumeMounts:
     subPath: node-modules
     name: node-modules
 
+# -- Control what node(s) pods can be scheduled on
 nodeSelector: {}
 
+# -- Control what taints these workloads can tolerate
 tolerations: []
 
+# -- Adjust pod affinity/grouping behavior on nodes
 affinity: {}
 
 # - Array of init containers
 initContainers:
+  # -- seed container, this copies in the pacßkage.json, package-lock.json, and index.js to kick start server that passes health checks
+  #    the intent is this can be changed live and persisted in the app-code pvc as you make changes through the dev side car, when
+  #    you finish making changes for a cycle you can disable the dev side car. If the ability to rollback is important to you, use a storage
+  #    system with snapshotting and rollback.
   - name: seed-container
     image: node:lts
     volumeMounts:
@@ -117,20 +134,23 @@ initContainers:
       - "node"
       - "/seed/seed.mjs"
 
-# - Array of storage volumes managed by the helm release
+# -- Map of storage volumes managed by the helm release
 managedStorage:
-  - name: app-code
-    accessModes:
-      - ReadWriteOnce
+  # -- PVC to hold application specific code
+  app-code:
     size: 1Gi
-  - name: npm-cache
-    accessModes:
-      - ReadWriteOnce
+  # -- PVC to hold npm cache
+  npm-cache:
     size: 5Gi
-  - name: node-modules
-    accessModes:
-      - ReadWriteOnce
+  # -- PVC to hold node modules
+  node-modules:
     size: 5Gi
+  # -- PVC to hold SSH user home folder
+  home:
+    size: 10Gi
+  # -- PVC to persist dropbear config such as public keys
+  dropbear:
+    size: 256Mi
 
 virtualService:
   # - If enabled, a virtual service is created for a istio gateway
@@ -140,3 +160,37 @@ virtualService:
   # - Domain name for virtual service
   hostname: node.example.com
 clusterDomain: cluster.local
+# -- Control the sidecar that provides a drop bear ssh sidecar for VS Code Remote
+devSideCar:
+  # -- Enable the ssh sidecar, if you aren't making active live changes to your code you can disable this
+  enabled: true
+  image:
+    repository: ghcr.io/bryopsida/k8s-dev-pod
+    pullPolicy: Always
+    tag: "main"
+  # -- set the name of the PVC holding the ssh user home fodler
+  homePvcName: home
+  # -- set the name of the PVC holding the dropbear config files
+  dropbearPvcName: dropbear
+  # -- install oh my zsh
+  ohMyZshInstallEnabled: true
+  # -- install nvm
+  nvmInstallEnabled: true
+  # install sdk man
+  sdkManInstallEnabled: true
+  # -- Enable creating a random password on startup for the ssh user, once a public key has been copied this can/should be disabled
+  passwordLoginEnabled: true
+  # contents to seed into authorized_keys, can be used to avoid ever using a password login on the dev side car
+  trustedPublicKeys: ~
+  service:
+    # -- Enable a service object for ssh access to the dev side car
+    enabled: true
+    # -- Type of service, ClusterIP keeps internal, LoadBalancer exposes the service
+    type: ClusterIP
+    # -- Port to use for service
+    port: 3022
+  # -- Set resources for the ssh/dev side car container
+  resources: {}
+  # -- Set security context settings for the ssh/dev side car container, you must take care when picking UID/GIDs to ensure the ssh user has permissions on the PVCs
+  securityContext:
+    runAsUser: 1000

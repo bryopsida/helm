@@ -1,0 +1,10 @@
+{{- if .Values.devSideCar.trustedPublicKeys }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-authorized-keys
+  labels:
+    {{- include "node-app.labels" . | nindent 4 }}
+data:
+  public-keys: {{ .Values.devSideCar.trustedPublicKeys | b64enc }}
+{{- end }}
