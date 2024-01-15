@@ -1,6 +1,6 @@
 # node-app
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A generic helm chart for a node app, load code into pod with `kubectl cp <app code foder> <pod name>:/app`. will automatically load new changes
 
@@ -35,6 +35,7 @@ A generic helm chart for a node app, load code into pod with `kubectl cp <app co
 | image.tag | string | `"lts"` |  |
 | imagePullSecrets | list | `[]` |  |
 | initContainers[0] | object | `{"command":["node","/seed/seed.mjs"],"image":"node:lts","name":"seed-container","securityContext":{"runAsUser":1000},"volumeMounts":[{"mountPath":"/seed","name":"seed"},{"mountPath":"/app","name":"app-code","subPath":"app-code"},{"mountPath":"/home/node/.npm","name":"npm-cache","subPath":"npm-cache"}]}` | seed container, this copies in the pacßkage.json, package-lock.json, and index.js to kick start server that passes health checks    the intent is this can be changed live and persisted in the app-code pvc as you make changes through the dev side car, when    you finish making changes for a cycle you can disable the dev side car. If the ability to rollback is important to you, use a storage    system with snapshotting and rollback. |
+| livenessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Control Liveness probe settings |
 | managedStorage | object | `{"app-code":{"size":"1Gi"},"dropbear":{"size":"256Mi"},"home":{"size":"10Gi"},"node-modules":{"size":"5Gi"},"npm-cache":{"size":"5Gi"}}` | Map of storage volumes managed by the helm release |
 | managedStorage.app-code | object | `{"size":"1Gi"}` | PVC to hold application specific code |
 | managedStorage.dropbear | object | `{"size":"256Mi"}` | PVC to persist dropbear config such as public keys |
@@ -48,6 +49,7 @@ A generic helm chart for a node app, load code into pod with `kubectl cp <app co
 | podLabels | object | `{}` |  |
 | podSecurityContext.fsGroup | int | `1000` |  |
 | probesEnabled | bool | `true` | Toggle use of probes, if you plan on pausing/break pointing app server, you'll want to disable probes |
+| readinessProbe | object | `{"httpGet":{"path":"/","port":"http"}}` | Control Readiness probe settings |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` | Set resource allocations for the service/app container |
 | securityContext | object | `{"runAsNonRoot":true,"runAsUser":1000}` | Set security context settings for the service/app container |

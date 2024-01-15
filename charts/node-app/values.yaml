@@ -37,6 +37,18 @@ podSecurityContext:
 # -- Toggle use of probes, if you plan on pausing/break pointing app server, you'll want to disable probes
 probesEnabled: true
 
+# -- Control Readiness probe settings
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+# -- Control Liveness probe settings
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+
 # -- Set security context settings for the service/app container
 securityContext:
   runAsUser: 1000
