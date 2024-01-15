@@ -57,6 +57,18 @@ entries:
     version: 0.1.0
   node-app:
   - apiVersion: v2
+    created: "2024-01-15T12:35:51.7402471Z"
+    description: A generic helm chart for a node app, load code into pod with `kubectl
+      cp <app code foder> <pod name>:/app`. will automatically load new changes
+    digest: 8fb09b00c33bc974c23fb282fd46bd3d4f9a7f56bafd740ab9a7b3a0b848ba76
+    maintainers:
+    - name: bryopsida
+    name: node-app
+    type: application
+    urls:
+    - https://github.com/bryopsida/helm/releases/download/node-app-0.5.1/node-app-0.5.1.tgz
+    version: 0.5.1
+  - apiVersion: v2
     created: "2024-01-15T12:16:58.815543461Z"
     description: A generic helm chart for a node app, load code into pod with `kubectl
       cp <app code foder> <pod name>:/app`. will automatically load new changes
@@ -250,4 +262,4 @@ entries:
     urls:
     - https://github.com/bryopsida/helm/releases/download/syslog-portal-0.1.0/syslog-portal-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-15T12:16:58.815582414Z"
+generated: "2024-01-15T12:35:51.740309025Z"
